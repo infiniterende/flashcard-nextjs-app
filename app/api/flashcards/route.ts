@@ -18,10 +18,13 @@ export async function POST(request: NextRequest) {
     data: {
       question: body.question,
       answer: body.answer,
-      deckId: body.deck.id || null,
-      userId: body.user.id || null,
     },
   });
 
   return NextResponse.json(newFlashcard, { status: 201 });
+}
+
+export async function GET() {
+  const flashcards = await prisma.flashcard.findMany();
+  return NextResponse.json({ flashcards });
 }

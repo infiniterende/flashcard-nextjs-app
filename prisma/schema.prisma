@@ -31,7 +31,7 @@ model Flashcard {
   question String @db.Text
   answer   String @db.Text
   deck     Deck?  @relation(fields: [deckId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  deckId   Int
+  deckId   Int?
   user     User?  @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  userId   Int
+  userId   Int?
 }

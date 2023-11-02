@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Flashcard" ALTER COLUMN "deckId" DROP NOT NULL,
+ALTER COLUMN "userId" DROP NOT NULL;
