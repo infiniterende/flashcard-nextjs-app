@@ -5,10 +5,8 @@ import "@radix-ui/themes/styles.css";
 
 export default function Home() {
   return (
-    <div>
-      <Button>
-        <Link href="/flashcards/new">New Flashcard</Link>
-      </Button>
-    </div>
+    <Button>
+      <Link href="/flashcards/new">New Flashcard</Link>
+    </Button>
   );
 }

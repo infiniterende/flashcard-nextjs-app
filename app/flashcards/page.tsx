@@ -1,51 +1,59 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Button, Card } from "@radix-ui/themes";
-import axios from "axios";
-import Spinner from "../components/Spinner";
+import { getFlashcards } from "../actions";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const FlashcardPage = async () => {
   const [showAnswer, setShowAnswer] = useState(false);
   const [flashcards, setFlashcards] = useState<any>();
 
-  const fetchData = async () => {
-    const response = await axios.get("/api/flashcards");
-    setFlashcards(response.data.flashcards);
-  };
-
   useEffect(() => {
-    fetchData();
+    const flashcards = async () => {
+      const data = await getFlashcards();
+      setFlashcards(data);
+      console.log(data);
+    };
+    flashcards();
   }, []);
 
-  console.log(flashcards);
   return (
-    <div className="flex items-center justify-center content-center">
-      {flashcards?.map((flashcard: any) => (
-        <div>
-          {!showAnswer && (
-            <div className="flex items-center justify-center content-center max-w-sm p-20 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700 m-4">
-              {" "}
-              {flashcard.question}
-            </div>
-          )}
-          {showAnswer && (
-            <div className="flex max-w-sm p-20  items-center justify-center content-center bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-              {" "}
-              {flashcard.answer}
-            </div>
-          )}
-          <div className="flex items-center justify-center content-center">
-            <Button
-              color="cyan"
-              variant="soft"
-              onClick={() => setShowAnswer(!showAnswer)}
-            >
-              {showAnswer ? "Hide Answer" : "Show Answer"}
-            </Button>
-          </div>
-        </div>
-      ))}
+    <div className="flex items-center justify-center">
+      <Carousel className="w-full flex align-center justify-center max-w-md">
+        <CarouselContent>
+          {flashcards?.map((flashcard: any, index: number) => (
+            <CarouselItem key={index}>
+              <div className="p-1">
+                <Card>
+                  <CardContent className="flex aspect-video items-center justify-center p-6">
+                    {!showAnswer && (
+                      <span className="">{flashcard.question}</span>
+                    )}
+                    {showAnswer && <span className="">{flashcard.answer}</span>}
+                  </CardContent>
+                </Card>
+                <div className="flex flex-col items-center justify-center p-6">
+                  <Button onClick={() => setShowAnswer(!showAnswer)}>
+                    {showAnswer ? "Hide Answer" : "Show Answer"}
+                  </Button>
+                </div>
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
     </div>
   );
 };
