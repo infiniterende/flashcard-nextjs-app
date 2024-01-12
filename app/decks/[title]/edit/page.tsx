@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter, redirect } from "next/navigation";
+import React, { useState, useEffect } from "react";
+import { useRouter, redirect, useParams } from "next/navigation";
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,10 +15,12 @@ import Spinner from "@/app/components/Spinner";
 
 import "easymde/dist/easymde.min.css";
 
-import { createFlashcard } from "@/app/flashcards/actions";
+import { getDeck, updateDeck } from "../../actions";
+
 type FlashcardForm = z.infer<typeof createFlashcardSchema>;
 
-const NewFlashcardPage = () => {
+const EditDeckPage = () => {
+  const { title } = useParams<any>();
   const {
     register,
     control,
@@ -26,6 +28,16 @@ const NewFlashcardPage = () => {
     formState: { errors },
   } = useForm<FlashcardForm>({ resolver: zodResolver(createFlashcardSchema) });
 
+  useEffect(() => {
+    async function getDeckId() {
+      const deck = await getDeck(title);
+      setDeckId(deck?.id);
+      console.log("deck", deck?.id);
+    }
+    getDeckId();
+  }, []);
+
+  const [deckId, setDeckId] = useState<number>();
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -33,8 +45,8 @@ const NewFlashcardPage = () => {
   const onSubmit = handleSubmit(async (data) => {
     try {
       setIsSubmitting(true);
-      await createFlashcard(data);
-      router.push("/flashcards");
+      await updateDeck({ id: deckId, title, flashcard: data });
+      router.push(`/decks/${title}`);
     } catch (error) {
       setIsSubmitting(false);
       setError("An unexpected error has occurred.");
@@ -67,4 +79,4 @@ const NewFlashcardPage = () => {
   );
 };
 
-export default NewFlashcardPage;
+export default EditDeckPage;

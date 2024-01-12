@@ -10,21 +10,20 @@ import SimpleMdeReact from "react-simplemde-editor";
 
 import { TextField, Button, Text } from "@radix-ui/themes";
 
-import createFlashcardSchema from "@/app/createFlashcardSchema";
 import Spinner from "@/app/components/Spinner";
 
-import "easymde/dist/easymde.min.css";
+import { createDeck } from "../actions";
 
-import { createFlashcard } from "@/app/flashcards/actions";
-type FlashcardForm = z.infer<typeof createFlashcardSchema>;
-
-const NewFlashcardPage = () => {
+type DeckForm = {
+  title: string;
+};
+const NewDeckPage = () => {
   const {
     register,
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FlashcardForm>({ resolver: zodResolver(createFlashcardSchema) });
+  } = useForm<DeckForm>();
 
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -33,8 +32,8 @@ const NewFlashcardPage = () => {
   const onSubmit = handleSubmit(async (data) => {
     try {
       setIsSubmitting(true);
-      await createFlashcard(data);
-      router.push("/flashcards");
+      await createDeck(data);
+      router.push("/decks");
     } catch (error) {
       setIsSubmitting(false);
       setError("An unexpected error has occurred.");
@@ -48,23 +47,15 @@ const NewFlashcardPage = () => {
           <TextField.Input
             size="3"
             variant="soft"
-            placeholder="Question"
-            {...register("question")}
+            placeholder="Title"
+            {...register("title")}
           />
         </TextField.Root>
 
-        <Controller
-          name="answer"
-          control={control}
-          render={({ field }) => (
-            <SimpleMdeReact placeholder="Answer" {...field} />
-          )}
-        />
-
-        <Button disabled={isSubmitting}>Add Flashcard</Button>
+        <Button disabled={isSubmitting}>Add Deck</Button>
       </form>
     </div>
   );
 };
 
-export default NewFlashcardPage;
+export default NewDeckPage;

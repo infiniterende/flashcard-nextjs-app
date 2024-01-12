@@ -10,12 +10,12 @@ interface Props {
 }
 
 const FlashcardDetailPage = async ({ params }: Props) => {
-  const flashcard = await prisma.flashcard.findUnique({
+  const flashcard = await prisma.flashcard.findFirst({
     where: {
       id: parseInt(params.id),
     },
   });
-  if (!flashcard) return notFound;
+  if (!flashcard) return notFound();
   return <Card className="prose">{flashcard.question}</Card>;
 };
 
